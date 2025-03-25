@@ -32,7 +32,9 @@ namespace CleanArch.Infra.Data.Repositories
 
         void IProductRepository.Add(Product product)
         {
-            throw new NotImplementedException();
+            _context.Add(product);
+            _context.SaveChanges();
+
         }
 
         Task<Product> IProductRepository.GetById(int? id)
