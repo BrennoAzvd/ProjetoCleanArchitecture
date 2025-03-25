@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using CleanArch.MVC.Models;
+using CleanArch.Infra.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArch.MVC.Controllers
