@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CleanArch.Domain.Entities;
+﻿using CleanArch.Domain.Entities;
 using CleanArch.Domain.Interfaces;
 using CleanArch.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
@@ -27,29 +22,36 @@ namespace CleanArch.Infra.Data.Repositories
         public async Task<Product> GetById(int? id)
         {
             return await _context.Products.FindAsync(id);
-
         }
 
-        void IProductRepository.Add(Product product)
+        public void Add(Product product)
         {
             _context.Add(product);
             _context.SaveChanges();
-
         }
 
-        Task<Product> IProductRepository.GetById(int? id)
+        public async Task Update(Product product)
         {
-            throw new NotImplementedException();
+            Product productToUpdate = await GetById(product.Id);
+
+            productToUpdate.Name = product.Name;
+            productToUpdate.Description = product.Description;
+            productToUpdate.Price = product.Price;
+
+            _context.Products.Update(productToUpdate);
+            await _context.SaveChangesAsync();
         }
 
-        void IProductRepository.Remove(Product product)
+        public void Remove(int productId)
         {
-            throw new NotImplementedException();
+            var product = _context.Products.Find(productId);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+            }
         }
 
-        void IProductRepository.Update(Product product)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

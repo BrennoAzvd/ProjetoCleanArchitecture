@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CleanArch.Application.Interfaces;
 using CleanArch.Application.ViewModels;
 using CleanArch.Domain.Entities;
@@ -16,39 +11,43 @@ namespace CleanArch.Application.Services
         private IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public ProductService(IMapper mapper, IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;
         }
-        public void Add(ProductViewModel product)
+
+        public async Task<IEnumerable<ProductViewModel>> GetProducts()
         {
-            var mapProduct = _mapper.Map<Product>(product);
-            _productRepository.Add(mapProduct);
+            var products = await _productRepository.GetProducts();
+            var productsVM = _mapper.Map<IEnumerable<ProductViewModel>>(products);
+            return productsVM;
         }
 
         public async Task<ProductViewModel> GetById(int? id)
         {
-            var result = await _productRepository.GetById(id);
-            return _mapper.Map<ProductViewModel>(result);
+            Product product = await _productRepository.GetById(id);
+            ProductViewModel productVM = _mapper.Map<ProductViewModel>(product);
+            return productVM;
         }
 
-        public async Task<IEnumerable<ProductViewModel>> GetProducts()
+        public void Add(ProductViewModel product)
         {
-            var result = await _productRepository.GetProducts();
-            return _mapper.Map<IEnumerable<ProductViewModel>>(result);
+            Product mapProduct = _mapper.Map<Product>(product);
+            _productRepository.Add(mapProduct);
         }
 
-        public void Remove(int? id)
+        public async Task Update(ProductViewModel product)
         {
-            var product = _productRepository.GetById(id).Result;
-            _productRepository.Remove(product);
+            Product mapProduct = _mapper.Map<Product>(product);
+            await _productRepository.Update(mapProduct);
         }
 
-        public void Update(ProductViewModel product)
+        public void Remove(int Id)
         {
-            var mapProduct = _mapper.Map<Product>(product);
-            _productRepository.Update(mapProduct);
+            _productRepository.Remove(Id);
         }
+
+      
     }
 }
